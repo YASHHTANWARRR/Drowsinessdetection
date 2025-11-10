@@ -6,6 +6,8 @@ import argparse
 from __future__ import print_function
 import torch 
 from torchvision.transforms as transforms
+import torch.nn as nn
+import torch.nn.functional as F
 
 #splitting of the dataset(uncomment only once to split the folders )
 drowsy_img = '/Users/birba/OneDrive/Documents/projects_github/drowsiness/Drowsiness_detction/dataset'
@@ -69,10 +71,29 @@ transform = transforms.Compose[(
 )]
 
 image = transform(frame)
-
+ 
 patch_size = 16 
 patches = image.unfold(1,patch_size,patch_size).unfold(2,patch_size,patch_size)
 patches = patches.contiguous().view(3,-1,patch_size,patch_size)
+
+#patch embeddings
+
+def patchembeddings(nn.Module):
+    def __init__(self,img_size=224,patch_size=16,in_channels=3,embedd_dim=768):
+        super().__init__()
+        self.patch_size = patch_size
+        self.num_patches = (img_size // patch_size) ** 2
+        self.projection nn.Conv2d(in_channels,embedd_dim,kernel_size=patch_size,stride=patch_size)
+        self.position_embeddings = nn.Parameter(torch.zeros(1,self.num_patches,embedd_dim))
+
+    def forward(Self,x):
+        x = self.projection(x)  # (B,embedd_dim,H/patch_size,W/patch_size)
+        x = x.flatten(2)  # (B,embedd_dim,N)
+        x = x.transpose(1,2)  # (B,N,embedd_dim)
+        x = x + self.position_embeddings  # (B,N,embedd_dim)
+        return x
+
+
 
 
 
