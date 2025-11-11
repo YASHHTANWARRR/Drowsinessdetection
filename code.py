@@ -98,17 +98,17 @@ def patchembeddings(nn.Module):
 def visionTransformer(nn.Module):
     def __init__(self,img_size=224,patch_size=16,in_channels=3,embedd_dim=768,num_heads=12,num_layers=12,mlp_dim=3072,num_classes=2,dropout_rate=0.1):
         super().__init__()
-        self.patch_embeddings = Patchembeddings(img_size,patch_size,in_channels,embedd_dim)
+        self.patch_embeddings = patchembeddings(img_size,patch_size,in_channels,embedd_dim)
         encoder_layer = nn.TransformerEncoderLayer(d_model=embedd_dim,nhead=num_heads,dim_feedforward=mlp_dim,dropout=dropout_rate,activation='gelu')
         self.transformer_encoder = nn.TransformerEncoder(encoder_layer,num_layers=num_layers)
         self.classifier = nn.Linear(embedd_dim,num_classes)
 
     def forward(self,x):
-        x = self.patch_embeddings(x)  # (B,N,embedd_dim)
-        x = x.transpose(0,1)  # (N,B,embedd_dim)
-        x = self.transformer_encoder(x)  # (N,B,embedd_dim)
-        x = x.mean(dim=0)  # (B,embedd_dim)
-        x = self.classifier(x)  # (B,num_classes)
+        x = self.patch_embeddings(x)  
+        x = x.transpose(0,1)  
+        x = self.transformer_encoder(x)  
+        x = x.mean(dim=0)  
+        x = self.classifier(x)
         return x
 
 
