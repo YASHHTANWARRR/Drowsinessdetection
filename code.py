@@ -111,9 +111,7 @@ def visionTransformer(nn.Module):
         x = self.classifier(x)
         return x
 
-
-
-
+#face feature extraction
 
 
 
