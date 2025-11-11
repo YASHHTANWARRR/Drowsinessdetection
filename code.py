@@ -87,10 +87,10 @@ def patchembeddings(nn.Module):
         self.position_embeddings = nn.Parameter(torch.zeros(1,self.num_patches,embedd_dim))
 
     def forward(Self,x):
-        x = self.projection(x)  # (B,embedd_dim,H/patch_size,W/patch_size)
-        x = x.flatten(2)  # (B,embedd_dim,N)
-        x = x.transpose(1,2)  # (B,N,embedd_dim)
-        x = x + self.position_embeddings  # (B,N,embedd_dim)
+        x = self.projection(x)  
+        x = x.flatten(2)  
+        x = x.transpose(1,2) 
+        x = x + self.position_embeddings  
         return x
 
 #trasnformer encodding 
