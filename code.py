@@ -5,6 +5,8 @@ import cv2 as cv
 import argparse
 from __future__ import print_function
 import torch 
+import sklearn
+from sklearn.metrics import accuracy_score,confusion_matrix,classification_report,f1_score,precision_score,recall_score
 from torch import nn,optim
 from torchvision.transforms as transforms
 import torch.nn as nn
@@ -155,3 +157,30 @@ for epoch in range(epochs):
     
     epoch_loss = running_loss / len(train_split)
     print(f"Epoch {epoch+1}/{epochs}, Loss: {epoch_loss:.4f}")
+
+#evaluation matrices 
+model.eval()
+all_preds = []
+all_labels = []
+
+with torch.no_grad():
+    for images, labels in test_loader:
+        outputs = model(images)
+        _, preds = torch.max(outputs, 1)
+        all_preds.extend(preds.cpu().numpy())
+        all_labels.extend(labels.cpu().numpy())
+
+
+#all metrics 
+accuracy = accuracy_score(all_labels, all_preds)
+precision = precision_score(all_labels, all_preds, average='weighted')
+recall = recall_score(all_labels, all_preds, average='weighted')
+f1 = f1_score(all_labels, all_preds, average='weighted')
+conf_matrix = confusion_matrix(all_labels, all_preds)
+
+print(f"Accuracy: {accuracy:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall: {recall:.4f}")
+print(f"F1 Score: {f1:.4f}")
+print("Confusion Matrix:")
+print(conf_matrix)
