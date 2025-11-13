@@ -5,9 +5,14 @@ import cv2 as cv
 import argparse
 from __future__ import print_function
 import torch 
+from torch import nn,optim
 from torchvision.transforms as transforms
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.utils.data as data
+from torchvision import datasets,models,transforms
+from torchvision.models import vit_b_16
+
 
 #splitting of the dataset(uncomment only once to split the folders )
 drowsy_img = '/Users/birba/OneDrive/Documents/projects_github/drowsiness/Drowsiness_detction/dataset'
@@ -71,14 +76,13 @@ transform = transforms.Compose[(
 )]
 
 image = transform(frame)
- 
 patch_size = 16 
 patches = image.unfold(1,patch_size,patch_size).unfold(2,patch_size,patch_size)
 patches = patches.contiguous().view(3,-1,patch_size,patch_size)
 
 #patch embeddings
 
-def patchembeddings(nn.Module):
+def patchembeddings (nn.Module):
     def __init__(self,img_size=224,patch_size=16,in_channels=3,embedd_dim=768):
         super().__init__()
         self.patch_size = patch_size
@@ -111,8 +115,18 @@ def visionTransformer(nn.Module):
         x = self.classifier(x)
         return x
 
-#face feature extraction
+#face feature extraction//classification head
 
+def ClassificationHead(nn.module):
+    def __init__(self,input_dim,num_classes,dropout_prob=0.1):
+        super(ClassificationHead.self).__init__()
+        self.dropout=nn.Dropout(dropout_prob)
+        self.fc=nn.Linear(input_dim,num_classes)
+    
+    def forward(self,cls_token_output):
+        x=self.dropout(cls_token_output)    
+        logits=self.fc(x)
+        return logits
+    
 
-
-
+def x``
