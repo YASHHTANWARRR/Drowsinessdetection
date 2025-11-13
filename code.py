@@ -13,6 +13,8 @@ import torch.utils.data as data
 from torchvision import datasets,models,transforms
 from torchvision.models import vit_b_16
 
+#device
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #splitting of the dataset(uncomment only once to split the folders )
 drowsy_img = '/Users/birba/OneDrive/Documents/projects_github/drowsiness/Drowsiness_detction/dataset'
@@ -127,6 +129,29 @@ def ClassificationHead(nn.module):
         x=self.dropout(cls_token_output)    
         logits=self.fc(x)
         return logits
-    
 
-def x``
+#training data
+
+model = vit_b_16(pretrained=True)
+num_classes=len(datasets.ImageFolder(train_split).classes)
+model.heads=ClassificationHead(model.heads.head.in_features,num_classes)
+model = model.to(device)
+
+#optimizer 
+
+epochs = 20
+optimizer = optim.Adam(model.parameters(), lr=0.001) 
+
+model.train()
+for epoch in range(epochs):
+    for images, labels in train_loader:
+        optimizer.zero_grad()
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+        
+        running_loss += loss.item() * images.size(0)
+    
+    epoch_loss = running_loss / len(train_split)
+    print(f"Epoch {epoch+1}/{epochs}, Loss: {epoch_loss:.4f}")
